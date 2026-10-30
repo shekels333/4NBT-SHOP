@@ -450,6 +450,17 @@
       0%, 100% { opacity: 1; }
       50%      { opacity: 0.4; }
     }
+    .book-details { margin: -12px 0 22px; font-size: 12px; }
+    .book-details summary {
+      cursor: pointer; list-style: none; color: var(--ink-faint);
+      text-transform: uppercase; letter-spacing: 0.1em; font-size: 10px;
+    }
+    .book-details summary::-webkit-details-marker { display: none; }
+    .book-details summary::after { content: " +"; }
+    .book-details[open] summary::after { content: " −"; }
+    .book-details ul { list-style: none; margin: 10px 0 0; padding: 0; color: var(--ink-soft); line-height: 1.7; }
+    .book-details li span { color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.1em; font-size: 10px; margin-right: 6px; }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation: none !important;
@@ -553,6 +564,18 @@
           <div><dt>printed by</dt><dd>made to order</dd></div>
           <div><dt>shipping</dt><dd>US only</dd></div>
         </dl>
+
+        <details class="book-details">
+          <summary>Book details</summary>
+          <ul>
+            <li><span>format</span>Hardcover, linen wrap</li>
+            <li><span>size</span>Digest, 5.5 × 8.5 in</li>
+            <li><span>pages</span>154</li>
+            <li><span>interior</span>Black &amp; white, 80# white coated paper</li>
+            <li><span>cover</span>Matte finish</li>
+            <li>Printed on demand by Lulu; ships in 1–2 weeks (US only)</li>
+          </ul>
+        </details>
 
         <div class="qty">
           <label>Quantity</label>
