@@ -76,13 +76,18 @@
 
     .gate {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      /* Explicit square side: WebKit (all iOS browsers) can size
+         aspect-ratio grid items wider than their 1fr track. */
+      --side: min(432px, calc((100vw - 72px) / 2));
+      grid-template-columns: repeat(2, var(--side));
       gap: 16px;
-      width: min(880px, calc(100vw - 56px));
+      max-width: 100%;
     }
 
     .gate a {
-      aspect-ratio: 1;
+      width: var(--side);
+      height: var(--side);
+      min-width: 0;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -111,8 +116,14 @@
       body { padding: 24px 18px; }
       .mark { font-size: 26px; margin-bottom: 20px; }
       .gate {
-        grid-template-columns: 1fr;
-        width: min(420px, calc(100vw - 36px), calc((100dvh - 150px) / 2));
+        --side: min(420px, calc(100vw - 36px), calc((100vh - 150px) / 2));
+        grid-template-columns: var(--side);
+      }
+    }
+
+    @supports (height: 100dvh) {
+      @media (max-width: 800px) {
+        .gate { --side: min(420px, calc(100vw - 36px), calc((100dvh - 150px) / 2)); }
       }
     }
 
