@@ -3,6 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    // Same key as the choice screen. Light until a visitor chooses dark.
+    (function () {
+      try {
+        if (localStorage.getItem("4nbt-theme") === "dark") {
+          document.documentElement.setAttribute("data-theme", "dark");
+        }
+      } catch (e) {}
+    })();
+  </script>
   <title>4nbt.shop</title>
   <meta name="description" content="TB holo sticker. 3-inch holographic die-cut vinyl. Ships to the US only." />
 
@@ -38,12 +48,44 @@
       --ink-soft: #555555;
       --ink-faint: #aaaaaa;
       --rule: rgba(0, 0, 0, 0.08);
+      --rule-strong: rgba(0, 0, 0, 0.14);
       --accent: #000;
+      --header: rgba(255, 255, 255, 0.85);
+      --line: #eeeeee;
+      --line-soft: #f0f0f0;
+      --overlay: rgba(0, 0, 0, 0.35);
+      --shadow: rgba(0, 0, 0, 0.12);
+      --signature: rgba(0, 0, 0, 0.3);
+      --sheen: rgba(255, 255, 255, 0.18);
+      color-scheme: light;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #000000;
+      --ink: #ffffff;
+      --ink-soft: #aaaaaa;
+      --ink-faint: #767676;
+      --rule: rgba(255, 255, 255, 0.14);
+      --rule-strong: rgba(255, 255, 255, 0.22);
+      --accent: #fff;
+      --header: rgba(0, 0, 0, 0.85);
+      --line: #2a2a2a;
+      --line-soft: #222222;
+      --overlay: rgba(255, 255, 255, 0.18);
+      --shadow: rgba(0, 0, 0, 0.5);
+      --signature: rgba(255, 255, 255, 0.35);
+      --sheen: rgba(0, 0, 0, 0.16);
+      color-scheme: dark;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    html {
+      background: var(--bg);
+      scroll-padding-bottom: 76px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
     body {
       background: var(--bg);
       color: var(--ink);
@@ -65,7 +107,7 @@
       align-items: center;
       padding: 22px 28px;
       z-index: 50;
-      background: rgba(255,255,255,0.85);
+      background: var(--header);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--rule);
@@ -109,31 +151,31 @@
 
     /* === CART === */
     .add-btn { margin-top: 8px; margin-bottom: 0; }
-    .add-btn.added { background: var(--ink); color: #fff; }
-    .cart-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 90; }
+    .add-btn.added { background: var(--ink); color: var(--bg); }
+    .cart-overlay { position: fixed; inset: 0; background: var(--overlay); opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 90; }
     .cart-overlay.open { opacity: 1; pointer-events: auto; }
-    .cart-drawer { position: fixed; top: 0; right: 0; height: 100%; height: 100dvh; width: min(420px, 100vw); background: #fff; z-index: 100;
+    .cart-drawer { position: fixed; top: 0; right: 0; height: 100%; height: 100dvh; width: min(420px, 100vw); background: var(--bg); z-index: 100;
       transform: translateX(100%); transition: transform .3s ease; display: flex; flex-direction: column; border-left: 1.5px solid var(--ink); }
     .cart-drawer.open { transform: translateX(0); }
-    .cart-head { display: flex; justify-content: space-between; align-items: center; padding: 20px 22px; border-bottom: 1px solid #eee;
+    .cart-head { display: flex; justify-content: space-between; align-items: center; padding: 20px 22px; border-bottom: 1px solid var(--line);
       font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.22em; }
     .cart-close { background: none; border: 0; font-size: 26px; line-height: 1; cursor: pointer; padding: 4px 8px; color: var(--ink); }
     .cart-lines { flex: 1; overflow-y: auto; padding: 8px 22px; }
     .cart-empty { color: var(--ink-soft); font-family: "Caveat", cursive; font-size: 20px; padding: 24px 0; }
-    .cart-line { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; padding: 16px 0; border-bottom: 1px solid #f0f0f0; }
+    .cart-line { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; padding: 16px 0; border-bottom: 1px solid var(--line-soft); }
     .cart-line .t { font-size: 13px; font-weight: 600; }
     .cart-line .p { font-size: 13px; text-align: right; }
     .cart-line .ctl { display: flex; align-items: center; gap: 10px; font-size: 13px; }
-    .cart-line .ctl button { width: 32px; height: 32px; border: 1.5px solid var(--ink); background: #fff; cursor: pointer; font-size: 16px; color: var(--ink); }
+    .cart-line .ctl button { width: 32px; height: 32px; border: 1.5px solid var(--ink); background: var(--bg); cursor: pointer; font-size: 16px; color: var(--ink); }
     .cart-line .ctl button:disabled { opacity: .3; cursor: default; }
     .cart-line .rm { background: none; border: 0; font-size: 10px; text-transform: uppercase; letter-spacing: .18em; color: var(--ink-soft); cursor: pointer; text-align: right; text-decoration: underline; }
-    .cart-foot { padding: 18px 22px calc(18px + env(safe-area-inset-bottom)); border-top: 1px solid #eee; }
+    .cart-foot { padding: 18px 22px calc(18px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); }
     .cart-sub { display: flex; justify-content: space-between; font-size: 12px; text-transform: uppercase; letter-spacing: .16em; margin-bottom: 4px; }
     .cart-foot .hint { font-size: 11px; color: var(--ink-soft); margin-bottom: 12px; }
     .cart-foot .yzy-btn { margin-top: 8px; }
     .cart-foot button:disabled { opacity: .4; cursor: default; }
     body.cart-locked { overflow: hidden; }
-    .cart-toast { position: fixed; top: 56px; right: 16px; z-index: 80; background: #fff; border: 1.5px solid var(--ink); padding: 10px 14px; font-size: 12px; letter-spacing: .06em; box-shadow: 0 4px 14px rgba(0,0,0,.12); opacity: 0; transform: translateY(-6px); pointer-events: none; transition: opacity .2s ease, transform .2s ease; }
+    .cart-toast { position: fixed; top: 56px; right: 16px; z-index: 80; background: var(--bg); border: 1.5px solid var(--ink); padding: 10px 14px; font-size: 12px; letter-spacing: .06em; box-shadow: 0 4px 14px var(--shadow); opacity: 0; transform: translateY(-6px); pointer-events: none; transition: opacity .2s ease, transform .2s ease; }
     .cart-toast.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
     .cart-toast a { color: var(--ink); font-weight: 600; margin-left: 4px; }
     .cart-count.bump { display: inline-block; animation: cartbump .45s ease; }
@@ -270,6 +312,7 @@
     }
     .qty-btn {
       background: none;
+      color: var(--ink);
       border: 1px solid var(--ink);
       width: 30px; height: 30px;
       font-family: inherit;
@@ -277,7 +320,7 @@
       cursor: pointer;
       transition: background 0.15s, color 0.15s;
     }
-    .qty-btn:hover { background: var(--ink); color: #fff; }
+    .qty-btn:hover { background: var(--ink); color: var(--bg); }
     .qty-btn:disabled {
       border-color: var(--ink-faint);
       color: var(--ink-faint);
@@ -295,7 +338,7 @@
       width: 100%;
       padding: 18px;
       background: var(--ink);
-      color: #fff;
+      color: var(--bg);
       border: none;
       font-family: inherit;
       font-size: 11px;
@@ -313,7 +356,7 @@
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.18) 50%, transparent 70%);
+      background: linear-gradient(120deg, transparent 30%, var(--sheen) 50%, transparent 70%);
       transform: translateX(-100%);
       transition: transform 0.6s ease;
     }
@@ -338,7 +381,7 @@
     }
     .yzy-btn:hover {
       background: var(--ink);
-      color: #fff;
+      color: var(--bg);
       transform: translateY(-1px);
     }
     .yzy-btn:active { transform: translateY(0); }
@@ -413,8 +456,8 @@
     }
 
     /* === FOOTER === */
-    footer {
-      padding: 40px 28px 28px;
+      footer {
+      padding: 40px 28px 76px;
       border-top: 1px solid var(--rule);
       display: flex;
       justify-content: space-between;
@@ -464,7 +507,7 @@
       bottom: 8px; left: 10px;
       font-family: ui-serif, Georgia, serif;
       font-size: 16px;
-      color: rgba(0,0,0,0.3);
+      color: var(--signature);
       z-index: 5;
       pointer-events: none;
       animation: breathe 5.5s ease-in-out infinite;
@@ -511,11 +554,20 @@
       .product {
         grid-template-columns: 1fr;
         gap: 18px;             /* image + its own info read as one group */
-        padding: 3vh 6vw 9vh;  /* and a wide margin before the next one */
+        padding: 3vh 6vw calc(9vh + 72px);  /* room to scroll actions above the theme switch */
         min-height: auto;
       }
+      /* Portrait art plus the buy stack is taller than a phone. Cap the
+         image so Buy now / Pay stay above the fixed theme switch. */
+      .product-image img {
+        width: auto;
+        max-width: 100%;
+        max-height: clamp(48px, calc(100vh - 664px), 480px);
+        max-height: clamp(48px, calc(100dvh - 664px), 480px);
+        object-fit: contain;
+      }
       .product + .product {
-        border-top-color: rgba(0, 0, 0, 0.14);
+        border-top-color: var(--rule-strong);
       }
       .product-image img { max-width: 100%; }
       .upcoming .product-image img.book-cover { max-width: 62%; }
@@ -551,16 +603,79 @@
       .qty { padding: 9px 0; margin-bottom: 11px; }
       .buy-btn { padding: 16px; }
       .yzy-btn { padding: 14px; margin-top: 7px; }
-      .buy-note { font-size: 16px; margin-top: 9px; }
-      .mint-counter { margin-top: 12px; font-size: 10px; }
+      .buy-note { font-size: 16px; margin-top: 4px; }
+      .mint-counter { margin-top: 0; font-size: 10px; }
 
-      footer { padding: 28px 18px; gap: 12px; flex-direction: column; align-items: flex-start; }
+      footer { padding: 28px 18px 84px; gap: 12px; flex-direction: column; align-items: flex-start; }
       .signature { bottom: 4px; left: 6px; font-size: 14px; }
     }
 
     @media (max-width: 480px) {
       .nav { font-size: 9px; gap: 14px; }
-      .product { padding: 2.5vh 6vw 8vh; gap: 16px; }
+      .product { padding: 2.5vh 6vw calc(8vh + 72px); gap: 16px; }
+    }
+
+    .theme-switch {
+      position: fixed;
+      right: max(14px, env(safe-area-inset-right));
+      bottom: max(14px, env(safe-area-inset-bottom));
+      z-index: 70;
+      display: flex;
+      border: 1.5px solid var(--ink);
+      background: var(--bg);
+    }
+    .theme-switch button {
+      appearance: none;
+      -webkit-appearance: none;
+      background: transparent;
+      color: var(--ink);
+      border: 0;
+      border-right: 1.5px solid var(--ink);
+      font-family: inherit;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 0 12px;
+      min-height: 44px;
+      cursor: pointer;
+      line-height: 1;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .theme-switch button:last-child { border-right: 0; }
+    .theme-switch button:hover,
+    .theme-switch button:focus-visible,
+    .theme-switch button[aria-pressed="true"],
+    html:not([data-theme="dark"]) .theme-switch button[data-theme-value="light"],
+    html[data-theme="dark"] .theme-switch button[data-theme-value="dark"] {
+      background: var(--ink);
+      color: var(--bg);
+    }
+    .theme-switch button:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 3px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* The book cover is nearly black; keep its edge visible on a black page. */
+    html[data-theme="dark"] .upcoming .product-image img.book-cover {
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.22),
+        0 18px 44px rgba(0, 0, 0, 0.55);
+    }
+
+    .buy-btn,
+    .yzy-btn,
+    .add-btn {
+      scroll-margin-bottom: 96px;
+    }
+
+    html.theme-changing,
+    html.theme-changing *,
+    html.theme-changing *::before,
+    html.theme-changing *::after {
+      transition: none !important;
     }
 
   </style>
@@ -575,6 +690,42 @@
       <a href="https://www.yzytheory.com/" target="_blank" rel="noopener">About</a>
     </nav>
   </header>
+
+  <div class="theme-switch" role="group" aria-label="Color theme">
+    <button type="button" data-theme-value="light" aria-pressed="true" aria-label="Switch to light mode">Light</button>
+    <button type="button" data-theme-value="dark" aria-pressed="false" aria-label="Switch to dark mode">Dark</button>
+  </div>
+  <script>
+    (function () {
+      var KEY = "4nbt-theme";
+      var root = document.documentElement;
+      var buttons = document.querySelectorAll("[data-theme-value]");
+      function apply(theme) {
+        var dark = theme === "dark";
+        root.classList.add("theme-changing");
+        if (dark) root.setAttribute("data-theme", "dark");
+        else root.removeAttribute("data-theme");
+        buttons.forEach(function (btn) {
+          var on = btn.getAttribute("data-theme-value") === (dark ? "dark" : "light");
+          btn.setAttribute("aria-pressed", on ? "true" : "false");
+        });
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { root.classList.remove("theme-changing"); });
+        });
+      }
+      buttons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var next = btn.getAttribute("data-theme-value") === "dark" ? "dark" : "light";
+          try { localStorage.setItem(KEY, next); } catch (e) {}
+          apply(next);
+        });
+      });
+      window.addEventListener("storage", function (e) {
+        if (e.key === KEY) apply(e.newValue === "dark" ? "dark" : "light");
+      });
+      apply(root.getAttribute("data-theme") === "dark" ? "dark" : "light");
+    })();
+  </script>
 
   <main id="shop">
 
