@@ -13,6 +13,16 @@
       }
     })();
   </script>
+  <script>
+    // Same key as /shop. Light until a visitor chooses dark.
+    (function () {
+      try {
+        if (localStorage.getItem("4nbt-theme") === "dark") {
+          document.documentElement.setAttribute("data-theme", "dark");
+        }
+      } catch (e) {}
+    })();
+  </script>
   <title>4nbt.shop</title>
   <meta name="description" content="Physical goods and digital collectibles." />
 
@@ -45,11 +55,25 @@
       --ink: #000000;
       --ink-soft: #555555;
       --ink-faint: #aaaaaa;
+      color-scheme: light;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #000000;
+      --ink: #ffffff;
+      --ink-soft: #aaaaaa;
+      --ink-faint: #767676;
+      color-scheme: dark;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    html {
+      background: var(--bg);
+      scroll-padding-bottom: 76px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
     body {
       background: var(--bg);
       color: var(--ink);
@@ -61,7 +85,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 28px;
+      padding: 28px 28px 76px;
     }
 
     .mark {
@@ -104,7 +128,7 @@
     .gate a:hover,
     .gate a:focus-visible {
       background: var(--ink);
-      color: #fff;
+      color: var(--bg);
       outline: none;
     }
     .gate a:focus-visible {
@@ -112,23 +136,77 @@
       outline-offset: 4px;
     }
 
+    .theme-switch {
+      position: fixed;
+      right: max(14px, env(safe-area-inset-right));
+      bottom: max(14px, env(safe-area-inset-bottom));
+      z-index: 70;
+      display: flex;
+      border: 1.5px solid var(--ink);
+      background: var(--bg);
+    }
+    .theme-switch button {
+      appearance: none;
+      -webkit-appearance: none;
+      background: transparent;
+      color: var(--ink);
+      border: 0;
+      border-right: 1.5px solid var(--ink);
+      font-family: inherit;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0 8px;
+      min-height: 32px;
+      cursor: pointer;
+      line-height: 1;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .theme-switch button:last-child { border-right: 0; }
+    .theme-switch button:hover,
+    .theme-switch button:focus-visible,
+    .theme-switch button[aria-pressed="true"],
+    html:not([data-theme="dark"]) .theme-switch button[data-theme-value="light"],
+    html[data-theme="dark"] .theme-switch button[data-theme-value="dark"] {
+      background: var(--ink);
+      color: var(--bg);
+    }
+    .theme-switch button:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 3px;
+      position: relative;
+      z-index: 1;
+    }
+
+    html.theme-changing,
+    html.theme-changing *,
+    html.theme-changing *::before,
+    html.theme-changing *::after {
+      transition: none !important;
+    }
+
     @media (max-width: 800px) {
-      body { padding: 24px 18px; }
+      body { padding: 24px 18px 76px; }
       .mark { font-size: 26px; margin-bottom: 20px; }
       .gate {
-        --side: min(420px, calc(100vw - 36px), calc((100vh - 150px) / 2));
+        --side: min(420px, calc(100vw - 36px), calc((100vh - 220px) / 2));
         grid-template-columns: var(--side);
       }
     }
 
     @supports (height: 100dvh) {
       @media (max-width: 800px) {
-        .gate { --side: min(420px, calc(100vw - 36px), calc((100dvh - 150px) / 2)); }
+        .gate { --side: min(420px, calc(100vw - 36px), calc((100dvh - 220px) / 2)); }
       }
     }
 
+    @media (max-height: 640px) {
+      .gate { --side: min(432px, calc((100vw - 72px) / 2), calc(100vh - 180px)); }
+    }
+
     @media (prefers-reduced-motion: reduce) {
-      .gate a { transition: none; }
+      .gate a, .theme-switch button { transition: none; }
     }
   </style>
 </head>
@@ -138,5 +216,40 @@
     <a href="/shop">PHYSICAL</a>
     <a href="https://nft.4nbt.shop">DIGITAL</a>
   </nav>
+  <div class="theme-switch" role="group" aria-label="Color theme">
+    <button type="button" data-theme-value="light" aria-pressed="true" aria-label="Switch to light mode">Light</button>
+    <button type="button" data-theme-value="dark" aria-pressed="false" aria-label="Switch to dark mode">Dark</button>
+  </div>
+  <script>
+    (function () {
+      var KEY = "4nbt-theme";
+      var root = document.documentElement;
+      var buttons = document.querySelectorAll("[data-theme-value]");
+      function apply(theme) {
+        var dark = theme === "dark";
+        root.classList.add("theme-changing");
+        if (dark) root.setAttribute("data-theme", "dark");
+        else root.removeAttribute("data-theme");
+        buttons.forEach(function (btn) {
+          var on = btn.getAttribute("data-theme-value") === (dark ? "dark" : "light");
+          btn.setAttribute("aria-pressed", on ? "true" : "false");
+        });
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { root.classList.remove("theme-changing"); });
+        });
+      }
+      buttons.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var next = btn.getAttribute("data-theme-value") === "dark" ? "dark" : "light";
+          try { localStorage.setItem(KEY, next); } catch (e) {}
+          apply(next);
+        });
+      });
+      window.addEventListener("storage", function (e) {
+        if (e.key === KEY) apply(e.newValue === "dark" ? "dark" : "light");
+      });
+      apply(root.getAttribute("data-theme") === "dark" ? "dark" : "light");
+    })();
+  </script>
 </body>
 </html>
