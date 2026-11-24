@@ -557,13 +557,12 @@
         padding: 3vh 6vw calc(9vh + 72px);  /* room to scroll actions above the theme switch */
         min-height: auto;
       }
-      /* Portrait art plus the buy stack is taller than a phone. Cap the
-         image so Buy now / Pay stay above the fixed theme switch. */
+      /* Keep product art at its full mobile width. A vh/dvh max-height
+         used to shrink the image to fit the buy stack on screen, but
+         100dvh changes as the browser chrome shows and hides on scroll. */
       .product-image img {
         width: auto;
         max-width: 100%;
-        max-height: clamp(48px, calc(100vh - 664px), 480px);
-        max-height: clamp(48px, calc(100dvh - 664px), 480px);
         object-fit: contain;
       }
       .product + .product {
